@@ -158,7 +158,10 @@ public class AuthenticationService {
      * @return
      */
     public boolean validateCSRFToken(String sessionID, String token){
-        return token.equals(SessionStore.getUserCredentialsStore().getTokenFromSession(sessionID));
+        if (null != token){
+            return token.equals(SessionStore.getUserCredentialsStore().getTokenFromSession(sessionID));
+        }
+        return false;
     }
 
 }

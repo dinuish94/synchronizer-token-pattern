@@ -9,7 +9,7 @@ public class FundTransfer {
 
     private String to;
     private String from;
-    private double amount;
+    private String amount;
     private String csrf;
 
     public String getTo() {
@@ -28,11 +28,11 @@ public class FundTransfer {
         this.from = from;
     }
 
-    public double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
@@ -51,20 +51,17 @@ public class FundTransfer {
 
         FundTransfer that = (FundTransfer) o;
 
-        if (Double.compare(that.amount, amount) != 0) return false;
         if (to != null ? !to.equals(that.to) : that.to != null) return false;
         if (from != null ? !from.equals(that.from) : that.from != null) return false;
+        if (amount != null ? !amount.equals(that.amount) : that.amount != null) return false;
         return csrf != null ? csrf.equals(that.csrf) : that.csrf == null;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = to != null ? to.hashCode() : 0;
+        int result = to != null ? to.hashCode() : 0;
         result = 31 * result + (from != null ? from.hashCode() : 0);
-        temp = Double.doubleToLongBits(amount);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (amount != null ? amount.hashCode() : 0);
         result = 31 * result + (csrf != null ? csrf.hashCode() : 0);
         return result;
     }
