@@ -66,14 +66,45 @@
                         <input type="submit" name="submit" value="Transfer" class="container-login100-submit-btn" id="submit-btn">
                         <!--</div>-->
                     </div>
+
+                    <div class="container-status-msg error-msg">
+                        <span class="status-msg" id="failed-error">Sorry, unable to process your request!</span>
+                    </div>
+
+                    <div class="container-status-msg success-msg">
+                        <span class="status-msg" id="success-message">Transaction completed successfully!</span>
+                    </div>
+
                 </form>
             </div>
         </div>
     </div>
 
     <script>
+
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
         window.addEventListener('load', function() {
-            console.log('All assets are loaded')
+            var error = document.getElementById("failed-error");
+            var success = document.getElementById("success-message");
+
+            if (getParameterByName("status") && getParameterByName("status") === "failed"){
+                error.style.visibility = "visible" ;
+            } else if (getParameterByName("status") && getParameterByName("status") === "success"){
+                success.style.visibility = "visible" ;
+            } else {
+                success.style.visibility = "hidden";
+                error.style.visibility = "hidden" ;
+            }
+
             retrieveToken()
         })
 

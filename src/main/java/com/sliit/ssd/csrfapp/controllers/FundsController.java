@@ -1,45 +1,48 @@
 package com.sliit.ssd.csrfapp.controllers;
 
-import com.sliit.ssd.csrfapp.exceptions.UnauthorizedException;
 import com.sliit.ssd.csrfapp.models.FundTransfer;
 import com.sliit.ssd.csrfapp.services.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * Handles fund transfer functions
  *
  * Created by dinukshakandasamanage on 9/6/18.
  */
-@RestController
+@Controller
 public class FundsController {
 
-    private static Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+    private static Logger logger = LoggerFactory.getLogger(FundsController.class);
 
     @Autowired
     AuthenticationService authenticationService;
 
     @PostMapping("/transfer")
-    public String transferFunds(@ModelAttribute FundTransfer fundTransfer, HttpServletRequest request) throws UnauthorizedException, IOException {
-        String sessionId = authenticationService.sessionIdFromCookies(request.getCookies());
+    public String transferFunds(@ModelAttribute FundTransfer fundTransfer, HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        String sessionId = authenticationService.sessionIdFromCookies(cookies);
 
+        logger.info("Request received for transferFunds...");
         logger.info("Validating token...");
-        if (authenticationService.validateCSRFToken(sessionId, fundTransfer.getCsrf())){
+
+        if (authenticationService.isAuthenticated(cookies) &&
+                authenticationService.validateCSRFToken(sessionId, fundTransfer.getCsrf())){
 
             logger.info("Token validated...");
             // a new CSRF token is created for the session
             authenticationService.generateToken(sessionId);
-            return "success";
+            return "redirect:/home?status=success";
         }
-        logger.error("Invalid token!!!");
-        throw new UnauthorizedException();
+        logger.error("User not authenticated!!!");
+        return "redirect:/home?status=failed";
     }
 
 
