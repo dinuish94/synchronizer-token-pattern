@@ -37,8 +37,6 @@ public class FundsController {
                 authenticationService.validateCSRFToken(sessionId, fundTransfer.getCsrf())){
 
             logger.info("Token validated...");
-            // a new CSRF token is created for the session
-            authenticationService.generateToken(sessionId);
             return "redirect:/home?status=success";
         }
         logger.error("User not authenticated!!!");
